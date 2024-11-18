@@ -195,6 +195,37 @@ app.get("/get-all-notes", authenticateToken, async (req, res) => {
         return res.status(500).json({ error: true, message: "Internal Server Error" });
     }
 });
+app.put("/update-note-pinned/:noteId",async(req,res)=>{  
+    const{isPinned}=req.body;
+    const noteId=req.params.noteId;
+    // const{user}=req.user;
+
+   
+   try{
+    const note = await Note.findOne({_id:noteId});
+    if(!note){
+        return res.status(400).json({
+            error:true,
+            message:"Note not found"
+            });
+        }
+        
+        note.isPinned=isPinned || false;
+
+        await note.save();
+        return res.json({
+            error:false,
+            note,
+            // isPinned,
+            message:"Note updated successfully",
+            });
+            } catch(error){
+                return res.status(400).json({
+                    error:true,
+                    message:"Internal Server Error"
+                    });
+                    }
+    });
 // app.listen(8000);
 
 mongoose
